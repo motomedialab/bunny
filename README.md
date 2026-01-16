@@ -23,37 +23,59 @@ This library consolidates the process of uploading a video into a series of jobs
 To upload a video, you need the URL of the video location and a title at a minimum.
 
 ```php
-
 // invokable class to trigger an upload job
 app()->call(\Motomedialab\Bunny\Actions\UploadVideoFromUrl::class, [
     'url' => 'https://example.com/file.mp4',
     'title' => 'The video title'
-])
+]);
 ```
 
-The above will dispatch a job to begin transcoding, which in turn
-will dispatch check jobs to monitor the progress of the video upload.
+### The Upload Flow
+
+The upload process is designed to be entirely asynchronous, leveraging Laravel's queueing system.
+When you call the `UploadVideoFromUrl` invokable action, the following steps are initiated:
+
+1. An `UploadVideoFromUrl` job is dispatched to the queue.
+2. When the job is processed, it makes an API call to Bunny.net, instructing it to fetch the video from the specified URL.
+3. If the API call fails for any reason, a `VideoUploadFailed` event is dispatched and the process ends.
+4. On success, a `CheckVideoTranscodingProgress` job is dispatched to the queue with a 2-minute delay. This is to give Bunny.net time to start the transcoding process.
+5. The `CheckVideoTranscodingProgress` job will then:
+    - Fire a `VideoTranscoding` event with the current progress of the transcoding.
+    - If the transcoding is finished, a `VideoTranscodingFinished` event is fired.
+    - If the transcoding fails, a `VideoTranscodingFailed` event is fired.
+    - If the initial upload failed, a `VideoUploadFailed` event is fired.
+    - If the video is still transcoding, the job will re-dispatch itself with a 30-second delay.
+
+This cycle will continue until the video has finished transcoding or an error occurs.
 
 ### Events
 
-```php
-use Motomedialab\Bunny\Events;
+This package fires several events throughout the upload and transcoding process, allowing you to hook into the workflow and react accordingly.
 
-# at every transcoding check, an event will be emitted
-# so you can monitor the progress
-Events\VideoTranscoding::class
+---
 
-# listen for transcoding finished - at this point the video is complete
-Events\VideoTranscodingFinished::class;
+#### `Motomedialab\Bunny\Events\VideoTranscoding`
 
-# on transcoding failure, this event will be fired. You can get more information
-# on the type of the failure via $event->video->transcodingMessages()
-Events\VideoTranscodingFailed::class;
+This event is fired each time the `CheckVideoTranscodingProgress` job runs and the video is still transcoding. It provides the current progress of the transcoding, allowing you to display a progress bar or other feedback to the user.
 
-# on upload failure, this event will be dispatched along with metadata
-# and where applicable the API error that occurred or the video object. 
-Events\VideoUploadFailed::class;
-```
+---
+
+#### `Motomedialab\Bunny\Events\VideoTranscodingFinished`
+
+Once the video has been successfully transcoded, this event is fired. This is the point where you would typically update your database, associate the video with a model, and make it available to your users.
+
+---
+
+#### `Motomedialab\Bunny\Events\VideoTranscodingFailed`
+
+If the transcoding process fails for any reason, this event will be fired. You can inspect the `$event->video->transcodingMessages()` to get more information on the type of failure.
+
+---
+
+#### `Motomedialab\Bunny\Events\VideoUploadFailed`
+
+This event is dispatched if the initial upload fails. This can happen for a variety of reasons, such as an invalid URL or an API error. The event will contain the API error or video object where applicable, along with any metadata you passed.
+
 
 ### Metadata
 
