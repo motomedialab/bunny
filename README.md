@@ -1,6 +1,16 @@
 # MotoMediaLab BunnyCDN Integration
 
 This is an expanding library of [bunny.net](https://bunny.net/) integrations developed by MotoMediaLab.
+Currently, it only supports uploading of videos via the Bunny Stream fetch method and some basic integration
+around this. As our requirements expand, this package will be updated with new functionality.
+
+## Installation
+
+Installation can be achieved quickly and easily using Composer:
+
+```bash
+composer require motomedialab/bunny
+```
 
 ## Configuration
 
