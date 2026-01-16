@@ -9,12 +9,15 @@ use Motomedialab\Bunny\Data\ManageVideos\VideoData;
 
 abstract readonly class VideoTranscodingEvent
 {
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
     public function __construct(public VideoData $video, public array $metadata)
     {
         //
     }
 
-    public function metadata($dot = ''): mixed
+    public function metadata(string $dot = ''): mixed
     {
         return Arr::get($this->metadata, $dot);
     }

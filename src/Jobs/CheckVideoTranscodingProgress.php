@@ -26,6 +26,9 @@ class CheckVideoTranscodingProgress implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
 
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
     public function __construct(public int $libraryId, public string $videoId, public array $metadata)
     {
         //

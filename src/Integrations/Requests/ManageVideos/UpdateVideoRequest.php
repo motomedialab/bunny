@@ -35,6 +35,9 @@ readonly class UpdateVideoRequest extends BaseRequest implements RequestInterfac
         return RequestMethod::POST;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function body(): array
     {
         return $this->updateVideo->toArray();

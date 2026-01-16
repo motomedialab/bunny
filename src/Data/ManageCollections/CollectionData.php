@@ -60,7 +60,7 @@ final readonly class CollectionData
     }
 
     /**
-     * @return array The URLs of preview images of videos in the collection
+     * @return array<int, string> The URLs of preview images of videos in the collection
      */
     public function previewImageUrls(): array
     {

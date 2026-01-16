@@ -23,7 +23,7 @@ readonly class FetchVideoUrlRequest extends BaseRequest implements RequestInterf
      * @param  int  $libraryId  The Library that the video should be uploaded to
      * @param  string  $url  The URL the video should be fetched from
      * @param  ?string  $title  The title of the video
-     * @param  array  $fetchHeaders  An array of headers to send with the fetch request.
+     * @param  array<string, string>  $fetchHeaders  An array of headers to send with the fetch request.
      * @param  ?string  $collectionId  Optional collection ID to upload the video into
      * @param  ?int  $thumbnailTimeMs  The time in milliseconds to extract the thumbnail frame
      */
@@ -43,6 +43,9 @@ readonly class FetchVideoUrlRequest extends BaseRequest implements RequestInterf
         return "library/{$this->libraryId}/videos/fetch";
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function body(): array
     {
         return array_filter([
@@ -52,6 +55,9 @@ readonly class FetchVideoUrlRequest extends BaseRequest implements RequestInterf
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function queryParams(): array
     {
         return array_filter([

@@ -18,6 +18,14 @@ class UploadVideoFromUrl implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
 
+    /**
+     * @param int $libraryId
+     * @param string $url
+     * @param string $title
+     * @param array<string, mixed> $metadata
+     * @param array<string, string> $fetchHeaders
+     * @param string|null $collectionId
+     */
     public function __construct(
         public int $libraryId,
         public string $url,
@@ -74,6 +82,11 @@ class UploadVideoFromUrl implements ShouldQueue
 
     private function handleSuccess(UploadResponse $response): int
     {
+        if (is_null($response->id())) {
+            $this->fail();
+            return 1;
+        }
+
         // we'll initially check for our transcoding status in two minutes time.
         dispatch(new CheckVideoTranscodingProgress($this->libraryId, $response->id(), $this->metadata))->delay(60 * 2);
 

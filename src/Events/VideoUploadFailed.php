@@ -9,6 +9,9 @@ use Motomedialab\Bunny\Data\ManageVideos\VideoData;
 
 readonly class VideoUploadFailed
 {
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
     public function __construct(public ApiError|VideoData $error, public array $metadata)
     {
         //

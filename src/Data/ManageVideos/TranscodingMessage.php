@@ -14,9 +14,11 @@ final readonly class TranscodingMessage
 {
     use HasData;
 
-    public function timestamp(): CarbonInterface
+    public function timestamp(): ?CarbonInterface
     {
-        return Carbon::make($this->get('timeStamp'));
+        $timestamp = $this->get('timeStamp');
+
+        return null === $timestamp ? null : Carbon::make($timestamp);
     }
 
     public function level(): TranscodingMessageLevel

@@ -6,6 +6,9 @@ namespace Motomedialab\Bunny\Data\Payloads;
 
 class UpdateVideo
 {
+    /**
+     * @var array<string, mixed>
+     */
     private array $data = [];
 
     public function title(?string $title): self
@@ -18,11 +21,17 @@ class UpdateVideo
         return $this->set('collectionId', $collectionId);
     }
 
+    /**
+     * @param array<string, string> $metaTags
+     */
     public function metaTags(array $metaTags): self
     {
         return $this->set('metaTags', $metaTags);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return $this->data;

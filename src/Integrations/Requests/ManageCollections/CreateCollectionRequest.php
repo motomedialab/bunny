@@ -31,6 +31,9 @@ readonly class CreateCollectionRequest extends BaseRequest implements RequestInt
         return RequestMethod::POST;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function body(): array
     {
         return [

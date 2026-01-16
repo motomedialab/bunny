@@ -49,11 +49,12 @@ final readonly class VideoData
     }
 
     /**
-     * @return CarbonInterface The date when the video was uploaded
+     * @return CarbonInterface|null The date when the video was uploaded
      */
-    public function dateUploaded(): CarbonInterface
+    public function dateUploaded(): ?CarbonInterface
     {
-        return Carbon::make($this->get('dateUploaded'));
+        $timestamp = $this->get('dateUploaded');
+        return null === $timestamp ? null : Carbon::make($timestamp);
     }
 
     /**
@@ -198,7 +199,7 @@ final readonly class VideoData
     }
 
     /**
-     * @return array The list of meta tags that have been added to the video
+     * @return array<string, string> The list of meta tags that have been added to the video
      */
     public function metaTags(): array
     {

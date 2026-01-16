@@ -11,8 +11,8 @@ class UploadVideoFromUrl
     /**
      * @param  string  $url  Absolute URL to video to upload
      * @param  string  $title  Title of the video
-     * @param  array  $metadata  Job metadata - will be distributed throughout jobs
-     * @param  array  $fetchHeaders  Headers to use when fetching video
+     * @param  array<string, mixed>  $metadata  Job metadata - will be distributed throughout jobs
+     * @param  array<string, string>  $fetchHeaders  Headers to use when fetching video
      * @param  string|null  $collectionId  Optional ID of the collection to add to
      */
     public function __invoke(
