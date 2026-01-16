@@ -1,6 +1,6 @@
 <?php
 
-namespace Motomedialab\Bunny\Integrations;
+namespace Motomedialab\Bunny\Integrations\Connectors;
 
 use Illuminate\Http\Client\PendingRequest;
 use Motomedialab\Connector\BaseConnector;
