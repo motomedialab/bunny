@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Motomedialab\Bunny\Integrations\Requests\ManageVideos;
 
 use Illuminate\Http\Client\Response;
 use Motomedialab\Bunny\Data\ApiError;
-use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
 use Motomedialab\Connector\BaseRequest;
 use Motomedialab\Connector\Contracts\RequestInterface;
+use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
 
 /**
  * Upload a video via a URL

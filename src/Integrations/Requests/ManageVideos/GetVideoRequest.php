@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Motomedialab\Bunny\Integrations\Requests\ManageVideos;
 
 use Illuminate\Http\Client\Response;
 use Motomedialab\Bunny\Data\ApiError;
-use Motomedialab\Bunny\Data\VideoData;
 use Motomedialab\Connector\BaseRequest;
+use Motomedialab\Bunny\Data\ManageVideos\VideoData;
 use Motomedialab\Connector\Contracts\RequestInterface;
 
 /**
  * Get details of a specific video
  *
- * @implements RequestInterface<ApiError|VideoData>
+ * @implements RequestInterface<VideoData|ApiError>
  */
 readonly class GetVideoRequest extends BaseRequest implements RequestInterface
 {

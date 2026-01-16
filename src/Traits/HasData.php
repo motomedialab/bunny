@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Motomedialab\Bunny\Traits;
 
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Client\Response;
 
 trait HasData
 {
@@ -12,9 +14,9 @@ trait HasData
         //
     }
 
-    public function get(string $key)
+    public function get(string $key, mixed $default = null)
     {
-        return Arr::get($this->data, $key);
+        return Arr::get($this->data, $key, $default);
     }
 
     public static function fromResponse(Response $response): static

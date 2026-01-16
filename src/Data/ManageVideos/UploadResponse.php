@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Motomedialab\Bunny\Data\ManageVideos;
 
 use Motomedialab\Bunny\Traits\HasData;

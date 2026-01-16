@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Motomedialab\Bunny\Integrations\Connectors;
 
-use Illuminate\Http\Client\PendingRequest;
 use Motomedialab\Connector\BaseConnector;
+use Illuminate\Http\Client\PendingRequest;
 
 class BunnyStreamConnector extends BaseConnector
 {

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Motomedialab\Bunny\Providers;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Motomedialab\Bunny\Integrations\Connectors\BunnyStreamConnector;
 
