@@ -9,6 +9,7 @@ use Motomedialab\Bunny\Data\ApiError;
 use Motomedialab\Connector\BaseRequest;
 use Motomedialab\Connector\Enums\RequestMethod;
 use Motomedialab\Connector\Contracts\RequestInterface;
+use Motomedialab\Bunny\Integrations\Requests\Traits\IsVideoRequest;
 
 /**
  * @implements RequestInterface<true|ApiError>

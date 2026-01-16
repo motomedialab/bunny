@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Motomedialab\Bunny\Integrations\Requests\ManageVideos;
 
 use Motomedialab\Bunny\Data\ApiError;
-use Motomedialab\Bunny\Data\ManageVideos\VideoData;
-use Motomedialab\Bunny\Integrations\Requests\Traits\IsVideoRequest;
 use Motomedialab\Connector\BaseRequest;
+use Motomedialab\Bunny\Data\ManageVideos\VideoData;
 use Motomedialab\Connector\Contracts\RequestInterface;
+use Motomedialab\Bunny\Integrations\Requests\Traits\IsVideoRequest;
 
 /**
  * Get details of a specific video

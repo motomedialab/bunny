@@ -13,14 +13,14 @@ class UploadVideoFromUrl
      * @param  string  $title  Title of the video
      * @param  array  $metadata  Job metadata - will be distributed throughout jobs
      * @param  array  $fetchHeaders  Headers to use when fetching video
-     * @param  int|null  $collectionId  Optional ID of the collection to add to
+     * @param  string|null  $collectionId  Optional ID of the collection to add to
      */
     public function __invoke(
         string $url,
         string $title,
         array $metadata = [],
         array $fetchHeaders = [],
-        ?int $collectionId = null
+        ?string $collectionId = null
     ): void {
         $libraryId = config('bunny.stream.video_library_id');
 

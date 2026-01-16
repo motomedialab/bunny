@@ -24,7 +24,7 @@ class UploadVideoFromUrl implements ShouldQueue
         public string $title,
         public array $metadata = [],
         public array $fetchHeaders = [],
-        public ?int $collectionId = null,
+        public ?string $collectionId = null,
     ) {
         //
     }
