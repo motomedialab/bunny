@@ -1,5 +1,10 @@
 # MotoMediaLab BunnyCDN Integration
 
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/motomedialab/bunny.svg?style=flat-square)](https://packagist.org/packages/motomedialab/bunny)
+[![Total Downloads](https://img.shields.io/packagist/dt/motomedialab/bunny.svg?style=flat-square)](https://packagist.org/packages/motomedialab/bunny)
+[![Tests](https://github.com/motomedialab/bunny/actions/workflows/tests.yml/badge.svg)](https://github.com/motomedialab/bunny/actions/workflows/tests.yml)
+
 This is an expanding library of [bunny.net](https://bunny.net/) integrations developed by MotoMediaLab.
 Currently, it only supports uploading of videos via the Bunny Stream fetch method and some basic integration
 around this. As our requirements expand, this package will be updated with new functionality.
@@ -89,8 +94,8 @@ This event is dispatched if the initial upload fails. This can happen for a vari
 
 ### Metadata
 
-For trackability, we recommend sending metadata. This is shared throughout the workflow
-so you can react to it further down the process.
+To track your conversion job throughout the process, we recommend sending metadata. This is shared throughout the workflow
+so you can react to the events later on.
 
 ```php
 // dispatch job with metadata
@@ -114,3 +119,10 @@ class VideoTranscodingListener
     }
 }
 ```
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
