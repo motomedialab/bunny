@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use Carbon\CarbonInterface;
-use Motomedialab\Bunny\Data\ManageVideos\TranscodingMessage;
 use Motomedialab\Bunny\Data\StorageSize;
-use Motomedialab\Bunny\Enums\TranscodingError;
 use Motomedialab\Bunny\Enums\VideoStatus;
 use Motomedialab\Bunny\Enums\VideoResolution;
+use Motomedialab\Bunny\Enums\TranscodingError;
 use Motomedialab\Bunny\Data\ManageVideos\VideoData;
+use Motomedialab\Bunny\Data\ManageVideos\TranscodingMessage;
 
 it('can create a video details dto', function () {
     $data = json_decode(
@@ -23,7 +23,7 @@ it('can create a video details dto', function () {
         ->id()->toBe('1e246d41-b219-41a5-be0e-e71b314e06b7')
         ->title()->toBe('A test video goes here')
         ->description()->toBeNull()
-        ->dateUploaded()->toBeInstanceOf(Carbon\CarbonInterface::class)
+        ->dateUploaded()->toBeInstanceOf(CarbonInterface::class)
         ->views()->toBe(0)
         ->isPublic()->toBe(false)
         ->length()->toBe(5)
@@ -62,7 +62,7 @@ it('can create a transcoding message', function () {
     expect($message)
         ->timestamp()->toBeInstanceOf(CarbonInterface::class)
         ->issue()->toBe(TranscodingError::VideoExceededMaxDuration)
-        ->level()->toBe(\Motomedialab\Bunny\Enums\TranscodingMessageLevel::Error)
+        ->level()->toBe(Motomedialab\Bunny\Enums\TranscodingMessageLevel::Error)
         ->message()->toBe('A message here')
         ->value()->toBe('A value here');
 });

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Motomedialab\Bunny\Data\ManageVideos;
 
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
+use Motomedialab\Bunny\Traits\HasData;
 use Motomedialab\Bunny\Enums\TranscodingError;
 use Motomedialab\Bunny\Enums\TranscodingMessageLevel;
-use Motomedialab\Bunny\Traits\HasData;
 
 final readonly class TranscodingMessage
 {

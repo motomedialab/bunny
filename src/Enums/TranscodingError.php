@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Motomedialab\Bunny\Enums;
 
 enum TranscodingError: int

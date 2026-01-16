@@ -6,11 +6,11 @@ namespace Motomedialab\Bunny\Data\ManageVideos;
 
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
-use Motomedialab\Bunny\Data\StorageSize;
-use Motomedialab\Bunny\Enums\SmartGenerateStatus;
-use Motomedialab\Bunny\Enums\VideoResolution;
-use Motomedialab\Bunny\Enums\VideoStatus;
 use Motomedialab\Bunny\Traits\HasData;
+use Motomedialab\Bunny\Data\StorageSize;
+use Motomedialab\Bunny\Enums\VideoStatus;
+use Motomedialab\Bunny\Enums\VideoResolution;
+use Motomedialab\Bunny\Enums\SmartGenerateStatus;
 
 final readonly class VideoData
 {

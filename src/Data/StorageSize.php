@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Motomedialab\Bunny\Data;
 
-readonly class StorageSize
+final readonly class StorageSize
 {
     public function __construct(public int $bytes)
     {

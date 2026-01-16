@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Motomedialab\Bunny\Jobs;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
 use Motomedialab\Bunny\Data\ApiError;
-use Motomedialab\Bunny\Data\ManageVideos\VideoData;
+use Illuminate\Queue\InteractsWithQueue;
 use Motomedialab\Bunny\Enums\VideoStatus;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Motomedialab\Bunny\Events\VideoTranscoding;
+use Motomedialab\Bunny\Events\VideoUploadFailed;
+use Motomedialab\Bunny\Data\ManageVideos\VideoData;
 use Motomedialab\Bunny\Events\VideoTranscodingFailed;
 use Motomedialab\Bunny\Events\VideoTranscodingFinished;
-use Motomedialab\Bunny\Events\VideoUploadFailed;
 use Motomedialab\Bunny\Integrations\Connectors\BunnyStreamConnector;
 use Motomedialab\Bunny\Integrations\Requests\ManageVideos\GetVideoRequest;
 

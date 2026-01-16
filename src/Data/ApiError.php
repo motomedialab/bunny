@@ -32,6 +32,7 @@ final class ApiError
             return new self(
                 'unauthorized',
                 'Server returned a 401 unauthorized',
+                $response->status(),
             );
         }
 
@@ -39,12 +40,14 @@ final class ApiError
             return new self(
                 'notFound',
                 'The requested resource was not found',
+                $response->status(),
             );
         }
 
         return new self(
             'serverError',
-            'The remote server encountered an error. Status code: '.$response->status(),
+            'The remote server encountered an error.',
+            $response->status(),
         );
     }
 }

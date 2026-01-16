@@ -8,8 +8,8 @@ use Illuminate\Bus\Queueable;
 use Motomedialab\Bunny\Data\ApiError;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
 use Motomedialab\Bunny\Events\VideoUploadFailed;
+use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
 use Motomedialab\Bunny\Integrations\Connectors\BunnyStreamConnector;
 use Motomedialab\Bunny\Integrations\Requests\ManageVideos\FetchVideoUrlRequest;
 
