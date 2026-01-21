@@ -22,7 +22,7 @@ class UploadVideoFromUrl
         array $fetchHeaders = [],
         ?string $collectionId = null
     ): void {
-        $libraryId = config('bunny.stream.video_library_id');
+        $libraryId = (int) config('bunny.stream.video_library_id');
 
         dispatch(new UploadVideoJob($libraryId, $url, $title, $metadata, $fetchHeaders, $collectionId));
     }
