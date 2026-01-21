@@ -12,7 +12,7 @@ abstract readonly class VideoTranscodingEvent
     /**
      * @param  array<string, mixed>  $metadata
      */
-    public function __construct(public VideoData $video, public array $metadata)
+    public function __construct(public ?VideoData $video, public array $metadata)
     {
         //
     }

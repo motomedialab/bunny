@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Motomedialab\Bunny\Data\ApiError;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Motomedialab\Bunny\Exceptions\JobException;
 use Motomedialab\Bunny\Events\VideoUploadFailed;
 use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
 use Motomedialab\Bunny\Integrations\Connectors\BunnyStreamConnector;
@@ -55,7 +56,7 @@ class UploadVideoFromUrl implements ShouldQueue
         return [60, 60 * 3, 60 * 5];
     }
 
-    public function handle(BunnyStreamConnector $connector): int
+    public function handle(BunnyStreamConnector $connector): void
     {
         $response = $connector->send(
             new FetchVideoUrlRequest(
@@ -68,28 +69,43 @@ class UploadVideoFromUrl implements ShouldQueue
         );
 
         if ($response instanceof ApiError) {
-            return $this->handleError($response);
+            throw JobException::fromApiError($response);
         }
 
-        return $this->handleSuccess($response);
+        $this->handleSuccess($response);
     }
 
-    private function handleError(ApiError $response): int
+    /**
+     * Laravel will call on this on failure.
+     */
+    public function failed(\Throwable $exception): int
     {
-        event(new VideoUploadFailed($response, $this->metadata));
+        if ($exception instanceof JobException) {
+            $apiError = $exception->apiError;
+        } else {
+            $apiError = new ApiError(
+                errorKey: 'unknown',
+                errorMessage: $exception->getMessage(),
+                statusCode: $exception->getCode()
+            );
+        }
+
+        event(new VideoUploadFailed($apiError, $this->metadata));
         return 1;
     }
 
-    private function handleSuccess(UploadResponse $response): int
+    private function handleSuccess(UploadResponse $response): void
     {
         if (is_null($response->id())) {
-            $this->fail();
-            return 1;
+            throw new \Exception('Failed to get video ID');
         }
 
-        // we'll initially check for our transcoding status in two minutes time.
-        dispatch(new CheckVideoTranscodingProgress($this->libraryId, $response->id(), $this->metadata))->delay(60 * 2);
-
-        return 0;
+        dispatch(
+            new CheckVideoTranscodingProgress(
+                $this->libraryId,
+                $response->id(),
+                $this->metadata
+            )
+        )->delay(60 * 2);
     }
 }

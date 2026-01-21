@@ -10,6 +10,7 @@ use Motomedialab\Bunny\Enums\VideoStatus;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Motomedialab\Bunny\Events\VideoTranscoding;
+use Motomedialab\Bunny\Exceptions\JobException;
 use Motomedialab\Bunny\Events\VideoUploadFailed;
 use Motomedialab\Bunny\Data\ManageVideos\VideoData;
 use Motomedialab\Bunny\Events\VideoTranscodingFailed;
@@ -34,48 +35,57 @@ class CheckVideoTranscodingProgress implements ShouldQueue
         //
     }
 
-    public function handle(BunnyStreamConnector $connector): int
+    /**
+     * Allow this job to process until its timeout
+     */
+    public function tries(): int
+    {
+        return 0;
+    }
+
+    /**
+     * Fail if the job hasn't completed in 2 hours
+     */
+    public function timeout(): int
+    {
+        return 3600 * 2;
+    }
+
+    public function handle(BunnyStreamConnector $connector): void
     {
         $response = $connector->send(new GetVideoRequest($this->libraryId, $this->videoId));
 
         if ($response instanceof ApiError) {
-            return $this->handleError($response);
+            throw JobException::fromApiError($response);
         }
 
-        return $this->handleSuccess($response);
+        $this->checkStatus($response);
     }
 
-    private function handleError(ApiError $error): int
+    public function failed(\Throwable $exception): void
     {
-        // ToDo: better handling of errors.
-
-        return 1;
+        event(new VideoTranscodingFailed(null, $this->metadata));
     }
 
-    private function handleSuccess(VideoData $video): int
+    private function checkStatus(VideoData $video): void
     {
         if ($video->videoStatus() === VideoStatus::Finished) {
             event(new VideoTranscodingFinished($video, $this->metadata));
-
-            return 0;
+            return;
         }
 
         if ($video->videoStatus() === VideoStatus::Error) {
             event(new VideoTranscodingFailed($video, $this->metadata));
-
-            return 0;
+            return;
         }
 
         if ($video->videoStatus() === VideoStatus::UploadFailed) {
             event(new VideoUploadFailed($video, $this->metadata));
-
-            return 0;
+            return;
         }
 
-        // if we get here, we need to check again in 30 seconds time...
-        dispatch(new CheckVideoTranscodingProgress($video->videoLibraryId(), $video->id(), $this->metadata))->delay(30);
+        // if we get here, let our system know its still going and release the job
         event(new VideoTranscoding($video, $this->metadata, $video->encodeProgress()));
-
-        return 0;
+        $this->release(30);
     }
 }
