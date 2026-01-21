@@ -10,7 +10,7 @@ it('can sign a url', function () {
     $signingKey = 'c7f105d6-530f-4437-9463-82995994c67a';
     $path = '/p/299/responsive-images/ISSPA3_0003_12___image_516_516.jpeg';
 
-    $url = new UrlSigner($signingKey, $hostname)
+    $url = (new UrlSigner($signingKey, $hostname))
         ->restrictToIp('10.10.10.10')
         ->blockedCountries(['US', 'IT'])
         ->allowedCountries(['GB'])
