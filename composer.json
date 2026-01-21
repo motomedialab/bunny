@@ -1,7 +1,6 @@
 {
   "name": "motomedialab/bunny",
   "description": "An integration with BunnyCDN to upload and check on the status of streamed videos",
-  "version": "1.0.0",
   "keywords": [
     "bunnycdn",
     "bunny-stream",
