@@ -9,6 +9,7 @@ use Motomedialab\Bunny\Data\ApiError;
 use Motomedialab\Connector\BaseRequest;
 use Motomedialab\Connector\Contracts\RequestInterface;
 use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
+use Motomedialab\Connector\Enums\RequestMethod;
 
 /**
  * Upload a video via a URL
@@ -36,6 +37,11 @@ readonly class FetchVideoUrlRequest extends BaseRequest implements RequestInterf
         public ?int $thumbnailTimeMs = null,
     ) {
         //
+    }
+
+    public function method(): RequestMethod
+    {
+        return RequestMethod::POST;
     }
 
     public function endpoint(): string

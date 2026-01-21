@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Event;
@@ -112,11 +113,14 @@ describe('upload video tests', function () {
             ]),
         ]);
 
-        $request = new FetchVideoUrlRequest(
+        $response = app(BunnyStreamConnector::class)->send(new FetchVideoUrlRequest(
             (int)config('bunny.stream.video_library_id'),
             'https://google.co.uk',
-        );
-        $response = app(BunnyStreamConnector::class)->send($request);
+        ));
+
+        Http::assertSent(function (Request $request) {
+            return expect($request)->method()->toBe('POST');
+        });
 
         expect($response)->toBeInstanceOf(UploadResponse::class)
             ->id()->toBeString()->toBe('1e246d41-b219-41a5-be0e-e71b314e06b7')
