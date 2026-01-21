@@ -51,6 +51,14 @@ class CheckVideoTranscodingProgress implements ShouldQueue
         return 3600 * 2;
     }
 
+    /**
+     * Define the maximum number of unhandled exceptions we'll allow.
+     */
+    public function maxExceptions(): int
+    {
+        return 3;
+    }
+
     public function handle(BunnyStreamConnector $connector): void
     {
         $response = $connector->send(new GetVideoRequest($this->libraryId, $this->videoId));

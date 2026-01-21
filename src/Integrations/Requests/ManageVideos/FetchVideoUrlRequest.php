@@ -7,9 +7,9 @@ namespace Motomedialab\Bunny\Integrations\Requests\ManageVideos;
 use Illuminate\Http\Client\Response;
 use Motomedialab\Bunny\Data\ApiError;
 use Motomedialab\Connector\BaseRequest;
+use Motomedialab\Connector\Enums\RequestMethod;
 use Motomedialab\Connector\Contracts\RequestInterface;
 use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
-use Motomedialab\Connector\Enums\RequestMethod;
 
 /**
  * Upload a video via a URL
