@@ -44,11 +44,11 @@ class CheckVideoTranscodingProgress implements ShouldQueue
     }
 
     /**
-     * Fail if the job hasn't completed in 2 hours
+     * Fail if the job hasn't completed in 30 minutes
      */
     public function timeout(): int
     {
-        return 3600 * 2;
+        return 60 * 30;
     }
 
     /**
