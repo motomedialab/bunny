@@ -119,7 +119,7 @@ describe('upload video tests', function () {
         ));
 
         Http::assertSent(function (Request $request) {
-            return expect($request)->method()->toBe('POST');
+            return expect(strtolower($request->method()))->toBe('post');
         });
 
         expect($response)->toBeInstanceOf(UploadResponse::class)
