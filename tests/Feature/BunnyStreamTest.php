@@ -19,6 +19,7 @@ use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
 use Motomedialab\Bunny\Jobs\CheckVideoTranscodingProgress;
 use Motomedialab\Bunny\Data\ManageVideos\TranscodingMessage;
 use Motomedialab\Bunny\Integrations\Connectors\BunnyStreamConnector;
+use Motomedialab\Bunny\Actions\UploadVideoFromUrl as UploadVideoAction;
 use Motomedialab\Bunny\Integrations\Requests\ManageVideos\GetVideoRequest;
 use Motomedialab\Bunny\Integrations\Requests\ManageVideos\FetchVideoUrlRequest;
 
@@ -83,7 +84,6 @@ function videoProgressCheck(array $params = []): void
     $job->handle(test()->connector);
 }
 
-
 describe('configuration checks', function () {
     it('can get the video library id', function () {
         expect(config('bunny.stream.video_library_id'))->toBe('12345');
@@ -114,7 +114,7 @@ describe('upload video tests', function () {
         ]);
 
         $response = app(BunnyStreamConnector::class)->send(new FetchVideoUrlRequest(
-            (int)config('bunny.stream.video_library_id'),
+            (int) config('bunny.stream.video_library_id'),
             'https://google.co.uk',
         ));
 
@@ -125,6 +125,21 @@ describe('upload video tests', function () {
         expect($response)->toBeInstanceOf(UploadResponse::class)
             ->id()->toBeString()->toBe('1e246d41-b219-41a5-be0e-e71b314e06b7')
             ->success()->toBeTrue();
+    });
+
+    it('can dispatch upload video job via action with a closure', function () {
+        Bus::fake([UploadVideoFromUrl::class]);
+
+        $action = new UploadVideoAction();
+        $action(fn () => 'https://example.com/action-closure.mp4', 'Action Title', ['meta' => 'value']);
+
+        Bus::assertDispatched(UploadVideoFromUrl::class, function (UploadVideoFromUrl $job) {
+            return $job->libraryId === 12345
+                && $job->title === 'Action Title'
+                && $job->metadata === ['meta' => 'value']
+                && is_callable($job->url)
+                && ($job->url)() === 'https://example.com/action-closure.mp4';
+        });
     });
 });
 
@@ -178,6 +193,58 @@ describe('job tests', function () {
         });
     });
 
+    it('can create a video transcoding request with a closure url', function () {
+        Bus::fake([CheckVideoTranscodingProgress::class]);
+
+        Http::fake([
+            'library/12345/videos/fetch' => Http::response([
+                'id' => '1e246d41-b219-41a5-be0e-e71b314e06b7',
+                'success' => true,
+                'message' => 'OK',
+                'statusCode' => 200,
+            ]),
+        ]);
+
+        dispatch_sync(new UploadVideoFromUrl(12345, fn () => 'https://example.com/dynamic-signed-file.mp4', 'A video title', [
+            'test' => true,
+        ]));
+
+        Http::assertSent(function (Request $request) {
+            return $request['url'] === 'https://example.com/dynamic-signed-file.mp4';
+        });
+
+        Bus::assertDispatchedTimes(function (CheckVideoTranscodingProgress $job) {
+            return expect($job)
+                ->libraryId->tobe(12345)
+                ->metadata->toBe(['test' => true])
+                ->videoId->toBe('1e246d41-b219-41a5-be0e-e71b314e06b7');
+        });
+    });
+
+    it('can serialize and unserialize an upload video job with a closure', function () {
+        Bus::fake([CheckVideoTranscodingProgress::class]);
+
+        Http::fake([
+            'library/12345/videos/fetch' => Http::response([
+                'id' => '1e246d41-b219-41a5-be0e-e71b314e06b7',
+                'success' => true,
+                'message' => 'OK',
+                'statusCode' => 200,
+            ]),
+        ]);
+
+        $job = new UploadVideoFromUrl(12345, fn () => 'https://example.com/serialized-closure.mp4', 'Serialized Video');
+
+        /** @var UploadVideoFromUrl $unserialized */
+        $unserialized = unserialize(serialize($job));
+
+        dispatch_sync($unserialized);
+
+        Http::assertSent(function (Request $request) {
+            return $request['url'] === 'https://example.com/serialized-closure.mp4';
+        });
+    });
+
     it('will emit when in progress', function () {
         videoProgressCheck([
             'status' => VideoStatus::Processing->value,
@@ -215,23 +282,23 @@ describe('job tests', function () {
                     'timeStamp' => '2025-01-01T12:35+00:00',
                     'level' => 3,
                     'issueCode' => 7,
-                ]
+                ],
             ],
         ]);
 
         Event::assertDispatched(
             VideoTranscodingFailed::class,
             fn (VideoTranscodingFailed $event) => expect($event)
-            ->metadata('test')->toBeTrue()
-            ->and($event->video)
-            ->toBeInstanceOf(VideoData::class)
-            ->encodeProgress()->toBe(0)
-            ->videoStatus()->toBe(VideoStatus::Error)
-            ->transcodingMessages()->toHaveCount(1)
-            ->and($event->video->transcodingMessages()[0])
-            ->toBeInstanceOf(TranscodingMessage::class)
-            ->level()->toBe(TranscodingMessageLevel::Error)
-            ->issue()->tobe(TranscodingError::OriginalCorrupted)
+                ->metadata('test')->toBeTrue()
+                ->and($event->video)
+                ->toBeInstanceOf(VideoData::class)
+                ->encodeProgress()->toBe(0)
+                ->videoStatus()->toBe(VideoStatus::Error)
+                ->transcodingMessages()->toHaveCount(1)
+                ->and($event->video->transcodingMessages()[0])
+                ->toBeInstanceOf(TranscodingMessage::class)
+                ->level()->toBe(TranscodingMessageLevel::Error)
+                ->issue()->tobe(TranscodingError::OriginalCorrupted)
         );
     });
 });

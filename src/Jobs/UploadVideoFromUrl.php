@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Motomedialab\Bunny\Jobs;
 
+use Closure;
 use Illuminate\Bus\Queueable;
 use Motomedialab\Bunny\Data\ApiError;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Motomedialab\Bunny\Exceptions\JobException;
 use Motomedialab\Bunny\Events\VideoUploadFailed;
+use Laravel\SerializableClosure\SerializableClosure;
 use Motomedialab\Bunny\Data\ManageVideos\UploadResponse;
 use Motomedialab\Bunny\Integrations\Connectors\BunnyStreamConnector;
 use Motomedialab\Bunny\Integrations\Requests\ManageVideos\FetchVideoUrlRequest;
@@ -18,6 +20,9 @@ class UploadVideoFromUrl implements ShouldQueue
 {
     use InteractsWithQueue;
     use Queueable;
+
+    public string|SerializableClosure $url;
+
 
     /**
      * @param int $libraryId
@@ -29,13 +34,14 @@ class UploadVideoFromUrl implements ShouldQueue
      */
     public function __construct(
         public int $libraryId,
-        public string $url,
+        string|Closure $url,
         public string $title,
         public array $metadata = [],
         public array $fetchHeaders = [],
         public ?string $collectionId = null,
     ) {
-        //
+        // allow passing of a closure to this method
+        $this->url = $url instanceof Closure ? new SerializableClosure($url) : $url;
     }
 
     /**
@@ -58,10 +64,12 @@ class UploadVideoFromUrl implements ShouldQueue
 
     public function handle(BunnyStreamConnector $connector): void
     {
+        $url = is_callable($this->url) ? ($this->url)() : $this->url;
+
         $response = $connector->send(
             new FetchVideoUrlRequest(
                 libraryId: $this->libraryId,
-                url: $this->url,
+                url: (string) $url,
                 title: $this->title,
                 fetchHeaders: $this->fetchHeaders,
                 collectionId: $this->collectionId,
