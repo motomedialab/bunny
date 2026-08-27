@@ -99,7 +99,7 @@ class UrlSigner
     {
         $queryParams = $this->generateQueryParams();
 
-        return 'https://'
+        return (str_starts_with($this->pzHostname, 'https://') ? null : 'https://')
             . $this->pzHostname
             . $path
             . (str_contains($path, '?') ? '&' : '?')
