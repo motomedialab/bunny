@@ -78,4 +78,9 @@ readonly class FetchVideoUrlRequest extends BaseRequest implements RequestInterf
             ? UploadResponse::fromResponse($response)
             : ApiError::fromResponse($response);
     }
+
+    public function timeout(): int
+    {
+        return 30;
+    }
 }
